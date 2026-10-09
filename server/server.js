@@ -16,6 +16,11 @@ const randMel = () => [0, 1, 2].map(() => Math.floor(Math.random() * 3));
 const randPos = () => ({ x: (Math.random() - 0.5) * 80, z: (Math.random() - 0.5) * 80 });
 const sameMel = (a, b) => a.length === 3 && b.length === 3 && a.every((v, i) => v === b[i]);
 const r2 = n => Math.round(n * 100) / 100;
+const tag = v => (typeof v === 'string' && /^[a-z]{1,12}$/.test(v)) ? v : 'none';
+function cleanLook(l) {
+  l = l || {};
+  return { s: tag(l.s) === 'none' ? 'yellow' : tag(l.s), a: tag(l.a), t: tag(l.t) };
+}
 
 function send(ws, o) { if (ws.readyState === 1) ws.send(JSON.stringify(o)); }
 function broadcast(room, o) { for (const p of room.players.values()) send(p.ws, o); }
@@ -29,8 +34,8 @@ function newCode() {
 }
 function cleanName(n) { return String(n || '玩家').replace(/[<>&]/g, '').trim().slice(0, 8) || '玩家'; }
 
-function joinRoom(ws, room, name) {
-  const p = { id: rid(), ws, name: cleanName(name), x: 0, z: 0, c: 0, m: 0, mel: randMel(), sc: 0, room };
+function joinRoom(ws, room, name, look) {
+  const p = { id: rid(), ws, name: cleanName(name), look: cleanLook(look), x: 0, z: 0, c: 0, m: 0, mel: randMel(), sc: 0, room };
   ws.player = p;
   room.players.set(p.id, p);
   send(ws, { t: 'joined', code: room.code, id: p.id });
@@ -80,7 +85,7 @@ wss.on('connection', ws => {
         if (p) return;
         const room = { code: newCode(), state: 'lobby', players: new Map(), timer: null };
         rooms.set(room.code, room);
-        joinRoom(ws, room, m.name);
+        joinRoom(ws, room, m.name, m.look);
         break;
       }
       case 'join': {
@@ -89,9 +94,12 @@ wss.on('connection', ws => {
         if (!room) return send(ws, { t: 'err', msg: '找不到這個房間' });
         if (room.state === 'playing') return send(ws, { t: 'err', msg: '這個房間正在遊戲中,請稍後再加入' });
         if (room.players.size >= MAXP) return send(ws, { t: 'err', msg: '房間已滿(最多 8 人)' });
-        joinRoom(ws, room, m.name);
+        joinRoom(ws, room, m.name, m.look);
         break;
       }
+      case 'look':
+        if (p) p.look = cleanLook(m.look);
+        break;
       case 'start':
         if (p && p.room.state === 'lobby') startRound(p.room);
         break;
@@ -139,7 +147,7 @@ setInterval(() => {
     const all = [...room.players.values()];
     for (const p of all) sc[p.id] = p.sc;
     for (const p of all) {
-      const others = all.filter(q => q !== p).map(q => ({ id: q.id, name: q.name, x: r2(q.x), z: r2(q.z), c: q.c, m: q.m, mel: q.mel }));
+      const others = all.filter(q => q !== p).map(q => ({ id: q.id, name: q.name, look: q.look, x: r2(q.x), z: r2(q.z), c: q.c, m: q.m, mel: q.mel }));
       send(p.ws, { t: 'snap', p: others, sc });
     }
   }
