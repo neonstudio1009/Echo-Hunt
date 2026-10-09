@@ -8,15 +8,17 @@
 *{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden;background:#0b0e24;font-family:-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;color:#fff;touch-action:none}
 #c{position:fixed;left:0;top:0;width:100%;height:100%;z-index:0;display:block}
-#hud{position:fixed;z-index:5;top:8px;left:0;right:0;display:flex;justify-content:space-between;padding:0 12px;pointer-events:none;font-weight:700}
+#hud{position:fixed;z-index:5;top:8px;left:0;right:0;display:flex;justify-content:space-between;padding:0 62px 0 12px;pointer-events:none;font-weight:700}
 #hud div{background:rgba(0,0,0,.55);padding:6px 10px;border-radius:10px;font-size:15px}
+#pauseBtn{position:fixed;z-index:7;top:6px;right:10px;width:44px;height:44px;border-radius:12px;background:rgba(0,0,0,.55);border:2px solid #fff7;display:flex;align-items:center;justify-content:center;gap:6px;padding:0;cursor:pointer}
+#pauseBtn span{display:block;width:6px;height:20px;background:#fff;border-radius:3px}
+#pauseBtn:active{background:rgba(255,255,255,.25)}
 #danger{position:fixed;z-index:5;top:50px;left:50%;transform:translateX(-50%);width:46%;max-width:300px;height:10px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden;pointer-events:none}
 #dangerFill{height:100%;width:0;background:linear-gradient(90deg,#ffd93d,#ff3b3b)}
 #seq{position:fixed;z-index:5;top:68px;left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:none}
 .dot{width:22px;height:22px;border-radius:50%;border:2px solid #fff8;background:#0008}
 #msg{position:fixed;z-index:5;top:100px;left:0;right:0;text-align:center;font-size:18px;font-weight:700;pointer-events:none;text-shadow:0 0 8px #000;min-height:24px}
-#board{position:fixed;z-index:5;top:48px;right:10px;font-size:13px;line-height:1.5;background:rgba(0,0,0,.45);padding:6px 10px;border-radius:10px;pointer-events:none;display:none;min-width:110px}
-#quit{position:fixed;z-index:6;top:48px;left:12px;background:rgba(0,0,0,.55);border:1px solid #fff6;color:#fff;border-radius:10px;padding:6px 10px;font-size:14px}
+#board{position:fixed;z-index:5;top:58px;right:10px;font-size:13px;line-height:1.5;background:rgba(0,0,0,.45);padding:6px 10px;border-radius:10px;pointer-events:none;display:none;min-width:110px}
 #joy{position:fixed;z-index:6;left:24px;bottom:28px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid #fff5;touch-action:none}
 #knob{position:absolute;left:35px;top:35px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.4);pointer-events:none}
 #keys{position:fixed;z-index:6;right:16px;bottom:24px;display:flex;gap:12px}
@@ -26,10 +28,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0b0e24;font-family:-a
 #crouch{position:fixed;z-index:6;right:16px;bottom:106px;width:84px;height:44px;border-radius:12px;background:#555d;border:2px solid #fff8;display:flex;align-items:center;justify-content:center;font-weight:700;touch-action:none}
 #crouch.on{background:#a855f7}
 .panel{position:fixed;z-index:10;inset:0;background:radial-gradient(circle at 50% 30%,#1c2360,#05060f 70%);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;overflow-y:auto}
+.panel.dim{z-index:12;background:rgba(5,6,15,.8)}
+.card{background:#1a2050;border:2px solid #fff3;border-radius:20px;padding:24px 20px;width:min(320px,90%);box-shadow:0 10px 40px #000a}
 .panel h1{font-size:40px;margin:0 0 4px;background:linear-gradient(90deg,#7df,#c6f);-webkit-background-clip:text;color:transparent}
 .panel h2{margin:0 0 10px;color:#cdf}
 .panel p{max-width:460px;line-height:1.6;margin:6px 0;font-size:15px;color:#cde}
-.btn{display:block;width:260px;margin:8px auto;padding:14px 20px;font-size:18px;font-weight:800;border:0;border-radius:14px;background:linear-gradient(90deg,#4cc9f0,#b86bff);color:#fff;cursor:pointer}
+.btn{display:block;width:260px;max-width:100%;margin:8px auto;padding:14px 20px;font-size:18px;font-weight:800;border:0;border-radius:14px;background:linear-gradient(90deg,#4cc9f0,#b86bff);color:#fff;cursor:pointer}
 .btn.alt{background:#2b3470}
 .btn.gray{background:#444a70}
 input[type=text]{width:260px;padding:12px;border-radius:12px;border:2px solid #fff4;background:#0008;color:#fff;font-size:18px;text-align:center;margin:6px 0;-webkit-user-select:text;user-select:text}
@@ -43,11 +47,11 @@ label{font-size:14px;color:#cde}
 <body>
 <canvas id="c"></canvas>
 <div id="hud"><div id="tScore">淘汰 0</div><div id="tTime">0:00</div><div id="tCoin">🪙 0</div></div>
+<button id="pauseBtn" aria-label="暫停"><span></span><span></span></button>
 <div id="danger"><div id="dangerFill"></div></div>
 <div id="seq"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
 <div id="msg"></div>
 <div id="board"></div>
-<button id="quit">離開</button>
 <div id="joy"><div id="knob"></div></div>
 <div id="crouch">蹲下</div>
 <div id="keys"><div class="key" id="k1">1 低</div><div class="key" id="k2">2 中</div><div class="key" id="k3">3 高</div></div>
@@ -69,7 +73,7 @@ label{font-size:14px;color:#cde}
   <p>走進對手的白色虛線圈內,他唱歌時會冒出彩色圈圈:紅=低、綠=中、藍=高。<b>圈外的對手沒有顏色,只能用耳朵聽。</b></p>
   <p>照順序按出他的 3 個音就能淘汰他,每淘汰一人獲得 🪙10。</p>
   <p>彈錯會發出噪音,暴露你的位置。蹲下聲音較小。</p>
-  <p>🎧 請戴耳機,左右聲音就是方向。<br>🎮 左下搖桿(電腦 WASD),右下三鍵(電腦 1 2 3),C 蹲下。</p>
+  <p>🎧 請戴耳機,左右聲音就是方向。<br>🎮 左下搖桿(電腦 WASD),右下三鍵(電腦 1 2 3),C 蹲下,Esc 暫停。</p>
   <button class="btn" id="howBack">返回</button>
 </div>
 
@@ -99,26 +103,32 @@ label{font-size:14px;color:#cde}
   <button class="btn gray" id="resMenu">回主畫面</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<div class="panel dim" id="pPause">
+  <div class="card">
+    <h2 id="pauseTitle">已暫停</h2>
+    <p id="pauseNote" class="small"></p>
+    <button class="btn" id="pResume">繼續遊戲</button>
+    <button class="btn gray" id="pQuit">回主畫面</button>
+  </div>
+</div>
+
 <script>
-/* ====== 線上多人設定:把你的 Firebase 設定貼在這裡 ====== */
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  appId: "YOUR_APP_ID"
-};
-/* ================================================== */
+/* ====== 線上多人設定:把 Render 給你的網址貼在這裡(用 wss://) ====== */
+const SERVER_URL = "wss://YOUR-APP.onrender.com";
+/* ================================================================ */
 
 const $=id=>document.getElementById(id);
 const FREQ=[262,392,587], COLS=['#ff5a5a','#3ddc6a','#5a8cff'];
 const RANGE=12, ARENA=45;
-function show(id){document.querySelectorAll('.panel').forEach(p=>p.style.display='none');if(id)$(id).style.display='flex';
-  const inGame=!id;['hud','seq','msg','joy','crouch','keys','quit'].forEach(k=>$(k).style.display=inGame?'':'none');
+let pauseOpen=false;
+function show(id){
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  pauseOpen=false;
+  if(id)$(id).style.display='flex';
+  const inGame=!id;['seq','msg','joy','crouch','pauseBtn'].forEach(k=>$(k).style.display=inGame?'':'none');
   $('hud').style.display=inGame?'flex':'none';$('keys').style.display=inGame?'flex':'none';
-  if(!inGame){$('danger').style.display='none';$('board').style.display='none';}}
+  if(!inGame){$('danger').style.display='none';$('board').style.display='none';}
+}
 function ls(k,d){try{const v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 
@@ -187,17 +197,38 @@ function randPos(){let x,z,t=0;do{x=(Math.random()-.5)*84;z=(Math.random()-.5)*8
 /* ---------- 遊戲狀態 ---------- */
 const player={x:0,z:0,crouch:false,moving:false};
 let mode='none';
-let running=false,score=0,timeLeft=180,elapsed=0,danger=0,seqIn=[],seqTimer=0,msgT=0,alertT=0,flashBad=0,myMel=[0,0,0];
+let running=false,score=0,timeLeft=180,elapsed=0,danger=0,seqIn=[],seqTimer=0,msgT=0,alertT=0,flashBad=0;
 const ents=[];
 const boom=[];
 function randMelody(){return [0,1,2].map(()=>Math.floor(Math.random()*3));}
 function sameMel(a,b){return a&&b&&a.length===3&&b.length===3&&a.every((v,i)=>v===b[i]);}
 function say(t,s){$('msg').textContent=t;msgT=s||1.5;}
 function drawSeq(){document.querySelectorAll('.dot').forEach((el,i)=>{el.style.background=seqIn[i]!==undefined?COLS[seqIn[i]]:'#0008';});}
-
 function newEnt(o){return Object.assign({x:0,z:0,mel:[],crouch:false,moving:false,vol:0.6,next:Math.random()*3,flash:0,noteIdx:0,panner:newPanner(),name:'',id:''},o);}
 function removeEnt(e){try{e.panner.disconnect();}catch(x){}const i=ents.indexOf(e);if(i>=0)ents.splice(i,1);}
 function clearEnts(){while(ents.length)removeEnt(ents[0]);}
+
+/* ---------- 暫停 ---------- */
+function openPause(){
+  if(!running||pauseOpen)return;
+  pauseOpen=true;
+  if(mode==='endless'){
+    $('pauseTitle').textContent='已暫停';$('pauseNote').textContent='';
+    if(ctx)ctx.suspend();
+  }else{
+    $('pauseTitle').textContent='選單';$('pauseNote').textContent='線上對戰不會暫停,其他玩家仍在進行';
+  }
+  $('pPause').style.display='flex';
+}
+function closePause(){
+  if(!pauseOpen)return;
+  pauseOpen=false;$('pPause').style.display='none';
+  if(ctx&&ctx.state==='suspended')ctx.resume();
+  last=performance.now();
+}
+$('pauseBtn').addEventListener('click',()=>{pauseOpen?closePause():openPause();});
+$('pResume').addEventListener('click',closePause);
+$('pQuit').addEventListener('click',()=>{pauseOpen=false;if(ctx&&ctx.state==='suspended')ctx.resume();toMenu();});
 
 /* ---------- 無盡模式 AI ---------- */
 function makeBot(){const b=newEnt({isBot:true,mode:'wander',target:null,pause:0,huntT:0});respawnBot(b);ents.push(b);return b;}
@@ -247,36 +278,28 @@ function singAll(dt){
   }
 }
 
-/* ---------- 按音符 / 淘汰 ---------- */
+/* ---------- 按音符 ---------- */
 function pressNote(n){
-  if(!running)return;
+  if(!running||pauseOpen)return;
   initAudio();tone(n,0,0.4,null,0.25);
   seqIn.push(n);seqTimer=4;drawSeq();
   if(seqIn.length===3){
     const s=seqIn.slice();
     setTimeout(()=>{seqIn=[];drawSeq();},250);
+    if(mode==='online'){send({t:'guess',mel:s});return;}
     let hit=null,hd=1e9;
     for(const e of ents){
       const d=Math.hypot(e.x-player.x,e.z-player.z);
       if(d<RANGE&&sameMel(e.mel,s)&&d<hd){hit=e;hd=d;}
     }
-    if(hit)onKill(hit);else onWrong();
+    if(hit){
+      score++;winSound();addCoins(10);say('淘汰成功!🪙+10',1.6);
+      boom.push({x:hit.x,z:hit.z,t:0});$('tScore').textContent='淘汰 '+score;
+      respawnBot(hit);danger=Math.max(0,danger-25);
+    }else{
+      buzz();flashBad=0.4;say('彈錯了!噪音暴露了你',1.6);alertT=3;danger=Math.min(100,danger+12);
+    }
   }
-}
-function onKill(e){
-  score++;winSound();addCoins(10);say('淘汰成功!🪙+10',1.6);
-  boom.push({x:e.x,z:e.z,t:0});
-  $('tScore').textContent='淘汰 '+score;
-  if(mode==='endless'){respawnBot(e);danger=Math.max(0,danger-25);}
-  else if(mode==='online'&&net.myRef){
-    net.ref.child('players/'+e.id+'/hit').set({by:net.name,id:Math.random().toString(36).slice(2)});
-    net.myRef.update({sc:score});
-  }
-}
-function onWrong(){
-  buzz();flashBad=0.4;say('彈錯了!噪音暴露了你',1.6);
-  if(mode==='endless'){alertT=3;danger=Math.min(100,danger+12);}
-  else if(mode==='online'&&net.myRef){net.myRef.update({nz:Math.random().toString(36).slice(2)});}
 }
 
 /* ---------- 輸入 ---------- */
@@ -290,6 +313,7 @@ $('crouch').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagat
 const keys={};
 addEventListener('keydown',e=>{
   if(document.activeElement&&document.activeElement.tagName==='INPUT')return;
+  if(e.code==='Escape'||e.code==='KeyP'){pauseOpen?closePause():openPause();return;}
   keys[e.code]=true;
   if(e.code==='Digit1')pressNote(0);if(e.code==='Digit2')pressNote(1);if(e.code==='Digit3')pressNote(2);
   if(e.code==='KeyC'||e.code==='ShiftLeft')toggleCrouch();
@@ -344,7 +368,7 @@ function draw(){
       if(e.name){g2.fillStyle='#fff';g2.font='12px sans-serif';g2.textAlign='center';g2.fillText(e.name,X,Y-SC*1.0);}
     }
     for(let i=boom.length-1;i>=0;i--){
-      const e=boom[i];e.t+=0.03;
+      const e=boom[i];if(!(pauseOpen&&mode==='endless'))e.t+=0.03;
       g2.strokeStyle='#fff';g2.globalAlpha=Math.max(0,1-e.t);g2.lineWidth=4;
       g2.beginPath();g2.arc(sx(e.x),sy(e.z),SC*(1+e.t*4),0,6.283);g2.stroke();g2.globalAlpha=1;
       if(e.t>=1)boom.splice(i,1);
@@ -357,7 +381,7 @@ function draw(){
   }
 }
 
-/* ---------- 開始 / 結束 ---------- */
+/* ---------- 無盡模式開始 / 結束 ---------- */
 function resetRound(){
   player.x=0;player.z=0;score=0;danger=0;seqIn=[];alertT=0;elapsed=0;timeLeft=180;drawSeq();
   $('tScore').textContent='淘汰 0';refreshCoins();
@@ -373,148 +397,112 @@ function endEndless(why){
   const newBest=score>bestEndless;if(newBest){bestEndless=score;lsSet('echoBestEndless',bestEndless);}
   $('resTitle').textContent=why;
   $('resBody').innerHTML='本局淘汰:<b>'+score+'</b>(獲得 🪙'+(score*10)+')<br>存活時間:'+fmt(elapsed)+'<br>最高紀錄:<b>'+bestEndless+'</b>'+(newBest&&score>0?' 🎉新紀錄':'');
-  $('resAgain').style.display='';$('resAgain').onclick=()=>{initAudio();startEndless();};
+  $('resAgain').textContent='再來一局';$('resAgain').onclick=()=>{initAudio();startEndless();};
   $('resMenu').onclick=toMenu;show('pResult');
 }
 function fmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function toMenu(){
   running=false;
-  if(mode==='online')leaveRoom();
+  if(mode==='online'||mode==='lobby')leaveRoom();
   mode='none';clearEnts();refreshMenu();show('pMenu');
 }
-$('quit').addEventListener('click',()=>{if(confirm('要離開遊戲回主畫面嗎?'))toMenu();});
 
-/* ---------- 線上多人 ---------- */
-const net={db:null,ref:null,myRef:null,id:Math.random().toString(36).slice(2,10),name:'',code:'',players:{},lastRound:null,lastHit:undefined,lastWrite:0,isHost:false,started:false,sbT:0};
-function initFirebase(){
-  if(net.db)return true;
-  if(typeof firebase==='undefined')return false;
-  if(FIREBASE_CONFIG.apiKey==='YOUR_API_KEY')return false;
-  try{firebase.initializeApp(FIREBASE_CONFIG);net.db=firebase.database();return true;}catch(e){return false;}
-}
+/* ---------- 線上多人(WebSocket → Render) ---------- */
+const net={ws:null,id:null,code:'',name:'',players:[],sc:{},lastSend:0,sbT:0};
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function setStatus(t){$('onStatus').textContent=t;}
 $('nameIn').value=ls('echoName','玩家'+Math.floor(Math.random()*90+10));
-function getName(){let n=$('nameIn').value.trim()||'玩家';lsSet('echoName',n);return n;}
-async function createRoom(){
+function getName(){const n=$('nameIn').value.trim()||'玩家';lsSet('echoName',n);return n;}
+function send(o){if(net.ws&&net.ws.readyState===1)net.ws.send(JSON.stringify(o));}
+function connect(onReady){
   initAudio();
-  if(!initFirebase()){setStatus('尚未設定 Firebase:請把你的 Firebase 設定貼到程式最上方 FIREBASE_CONFIG。');return;}
-  net.name=getName();setStatus('建立中...');
-  try{
-    let code,tries=0;
-    do{code=String(Math.floor(1000+Math.random()*9000));
-      const s=await net.db.ref('rooms/'+code+'/state').once('value');
-      if(!s.exists())break;tries++;}while(tries<8);
-    await net.db.ref('rooms/'+code).set({state:'lobby',round:0,created:Date.now()});
-    await joinRoom(code);
-  }catch(e){setStatus('建立失敗:'+e.message);}
-}
-async function joinRoom(code){
-  initAudio();
-  if(!initFirebase()){setStatus('尚未設定 Firebase:請把你的 Firebase 設定貼到程式最上方 FIREBASE_CONFIG。');return;}
-  net.name=getName();
-  try{
-    const ref=net.db.ref('rooms/'+code);
-    const snap=await ref.once('value');
-    if(!snap.exists()){setStatus('找不到這個房間');return;}
-    const v=snap.val();
-    if(v.state==='playing'){setStatus('這個房間正在遊戲中,請稍後再加入');return;}
-    const cnt=v.players?Object.keys(v.players).length:0;
-    if(cnt>=8){setStatus('房間已滿(最多 8 人)');return;}
-    net.ref=ref;net.code=code;net.lastRound=v.round||0;net.players={};net.lastHit=undefined;net.started=false;
-    net.myRef=ref.child('players/'+net.id);
-    myMel=randMelody();
-    await net.myRef.set({name:net.name,x:0,z:0,mel:myMel,c:0,m:0,sc:0});
-    net.myRef.onDisconnect().remove();
-    attachNet();
-    $('code').textContent=code;setStatus('');show('pLobby');mode='lobby';
-    renderLobby();
-  }catch(e){setStatus('加入失敗:'+e.message);}
-}
-function attachNet(){
-  const pr=net.ref.child('players');
-  pr.on('child_added',s=>{
-    const v=s.val(),id=s.key;net.players[id]={name:v.name,sc:v.sc||0};
-    if(id!==net.id){
-      const e=newEnt({id,name:v.name,x:v.x||0,z:v.z||0,mel:v.mel||[]});e.tx=e.x;e.tz=e.z;e.nz=v.nz||null;e.crouch=!!v.c;e.moving=!!v.m;ents.push(e);
+  if(SERVER_URL.indexOf('YOUR-APP')>=0){setStatus('尚未設定伺服器:請把 Render 給你的網址貼到程式最上方 SERVER_URL。');return;}
+  if(net.ws&&net.ws.readyState===1){onReady();return;}
+  setStatus('連線中…伺服器睡著時,第一次喚醒約需 1 分鐘,請稍等');
+  let done=false;
+  const ws=new WebSocket(SERVER_URL);net.ws=ws;
+  const to=setTimeout(()=>{if(!done){done=true;try{ws.close();}catch(e){}setStatus('連線逾時,請再試一次');}},90000);
+  ws.onopen=()=>{if(done)return;done=true;clearTimeout(to);setStatus('');onReady();};
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch(x){return;}handle(m);};
+  ws.onerror=()=>{if(!done){done=true;clearTimeout(to);setStatus('連線失敗,請檢查網址或稍後再試');}};
+  ws.onclose=()=>{
+    if(mode==='online'||mode==='lobby'){
+      running=false;mode='none';clearEnts();refreshMenu();show('pOnline');setStatus('與伺服器的連線中斷了');
     }
-    renderLobby();
-  });
-  pr.on('child_changed',s=>{
-    const v=s.val(),id=s.key;if(net.players[id])net.players[id].sc=v.sc||0;
-    const e=ents.find(q=>q.id===id);
-    if(e){
-      e.tx=v.x||0;e.tz=v.z||0;e.mel=v.mel||[];e.crouch=!!v.c;e.moving=!!v.m;
-      if(v.nz&&v.nz!==e.nz){e.nz=v.nz;if(running&&ctx){setPan(e.panner,e.x,e.z);buzz(e.panner,0.5);}}
-    }
-  });
-  pr.on('child_removed',s=>{
-    const id=s.key;delete net.players[id];
-    const e=ents.find(q=>q.id===id);if(e)removeEnt(e);renderLobby();
-  });
-  net.myRef.child('hit').on('value',s=>{
-    const v=s.val();
-    if(net.lastHit===undefined){net.lastHit=v?v.id:null;return;}
-    if(v&&v.id!==net.lastHit){
-      net.lastHit=v.id;
-      if(running&&mode==='online'){
-        const p=randPos();player.x=p.x;player.z=p.z;myMel=randMelody();
-        net.myRef.update({x:player.x,z:player.z,mel:myMel});
-        flashBad=0.5;say('你被 '+v.by+' 淘汰了!旋律已更新',2);
-      }
-    }
-  });
-  net.ref.child('round').on('value',s=>{
-    const r=s.val();
-    if(r!==null&&r!==net.lastRound){net.lastRound=r;if(mode==='lobby'||mode==='online')startOnline();}
-  });
+  };
 }
-function renderLobby(){
-  const ids=Object.keys(net.players);
-  $('plist').innerHTML=ids.map(i=>'👤 '+esc(net.players[i].name)+(i===net.id?'(你)':'')).join('<br>');
+function handle(m){
+  switch(m.t){
+    case 'err':setStatus(m.msg);break;
+    case 'joined':
+      net.id=m.id;net.code=m.code;mode='lobby';$('code').textContent=m.code;setStatus('');show('pLobby');break;
+    case 'lobby':
+      net.players=m.players;$('plist').innerHTML=m.players.map(p=>'👤 '+esc(p.name)+(p.id===net.id?'(你)':'')).join('<br>');break;
+    case 'start':startOnline(m);break;
+    case 'snap':applySnap(m);break;
+    case 'respawn':
+      player.x=m.x;player.z=m.z;flashBad=0.5;break;
+    case 'kill':
+      boom.push({x:m.x,z:m.z,t:0});
+      if(m.by===net.id){winSound();addCoins(10);say('淘汰 '+m.victimName+'!🪙+10',1.6);}
+      else if(m.victim===net.id){say('你被 '+m.byName+' 淘汰了!旋律已更新',2);}
+      break;
+    case 'noise':
+      if(m.id===net.id){buzz();flashBad=0.4;say('彈錯了!噪音暴露了你',1.6);}
+      else if(running){const e=ents.find(q=>q.id===m.id);if(e){setPan(e.panner,m.x,m.z);buzz(e.panner,0.5);}}
+      break;
+    case 'end':endOnline(m.ranking);break;
+  }
 }
-function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-function startOnline(){
-  initAudio();mode='online';resetRound();
-  const p=randPos();player.x=p.x;player.z=p.z;myMel=randMelody();
-  net.myRef.update({x:player.x,z:player.z,mel:myMel,sc:0,c:0,m:0});
-  Object.keys(net.players).forEach(i=>net.players[i].sc=0);
-  ents.forEach(e=>{e.flash=0;});
+function applySnap(m){
+  if(!running||mode!=='online')return;
+  const seen={};
+  for(const p of m.p){
+    seen[p.id]=1;
+    let e=ents.find(q=>q.id===p.id);
+    if(!e){e=newEnt({id:p.id,name:p.name,x:p.x,z:p.z});e.tx=p.x;e.tz=p.z;ents.push(e);}
+    e.tx=p.x;e.tz=p.z;e.crouch=!!p.c;e.moving=!!p.m;e.mel=p.mel||[];
+  }
+  for(const e of ents.slice())if(!seen[e.id])removeEnt(e);
+  net.sc=m.sc;
+  if(m.sc[net.id]!==undefined){score=m.sc[net.id];$('tScore').textContent='淘汰 '+score;}
+}
+function startOnline(m){
+  initAudio();clearEnts();mode='online';resetRound();
+  player.x=m.x;player.z=m.z;timeLeft=m.duration||180;
   show(null);$('board').style.display='block';
   running=true;say('開始!用耳朵找對手',2);
 }
-function endOnline(){
-  running=false;
-  try{net.ref.child('state').set('lobby');}catch(e){}
-  const ids=Object.keys(net.players);
-  net.players[net.id].sc=score;
-  ids.sort((a,b)=>net.players[b].sc-net.players[a].sc);
+function endOnline(ranking){
+  running=false;mode='lobby';clearEnts();
   const medals=['🥇','🥈','🥉'];
+  const mine=ranking.find(r=>r.id===net.id);const my=mine?mine.sc:0;
   $('resTitle').textContent='時間到!';
-  $('resBody').innerHTML=ids.map((i,k)=>(medals[k]||(k+1)+'.')+' '+esc(net.players[i].name)+(i===net.id?'(你)':'')+' — '+net.players[i].sc+' 淘汰').join('<br>')+'<br><br>你本局獲得 🪙'+(score*10);
-  $('resAgain').style.display='';$('resAgain').textContent='回房間大廳';
-  $('resAgain').onclick=()=>{mode='lobby';renderLobby();show('pLobby');};
+  $('resBody').innerHTML=ranking.map((r,k)=>(medals[k]||(k+1)+'.')+' '+esc(r.name)+(r.id===net.id?'(你)':'')+' — '+r.sc+' 淘汰').join('<br>')+'<br><br>你本局獲得 🪙'+(my*10);
+  $('resAgain').textContent='回房間大廳';$('resAgain').onclick=()=>show('pLobby');
   $('resMenu').onclick=toMenu;show('pResult');
 }
 function leaveRoom(){
-  try{if(net.ref){net.ref.child('players').off();net.ref.child('round').off();}
-    if(net.myRef){net.myRef.child('hit').off();net.myRef.onDisconnect().cancel();net.myRef.remove();}}catch(e){}
-  net.ref=null;net.myRef=null;net.players={};clearEnts();
+  try{send({t:'leave'});if(net.ws)net.ws.onclose=null;if(net.ws)net.ws.close();}catch(e){}
+  net.ws=null;net.id=null;mode='none';
 }
 function updateBoard(){
-  const ids=Object.keys(net.players);
-  net.players[net.id]&&(net.players[net.id].sc=score);
-  ids.sort((a,b)=>net.players[b].sc-net.players[a].sc);
-  $('board').innerHTML=ids.slice(0,6).map(i=>(i===net.id?'<b>':'')+esc(net.players[i].name)+' '+net.players[i].sc+(i===net.id?'</b>':'')).join('<br>');
+  const rows=(net.players||[]).map(p=>({id:p.id,name:p.name,sc:(net.sc&&net.sc[p.id])||0}));
+  rows.sort((a,b)=>b.sc-a.sc);
+  $('board').innerHTML=rows.slice(0,6).map(r=>(r.id===net.id?'<b>':'')+esc(r.name)+' '+r.sc+(r.id===net.id?'</b>':'')).join('<br>');
 }
-$('bStart').addEventListener('click',()=>{if(net.ref)net.ref.update({state:'playing',round:Date.now()});});
-$('bLeave').addEventListener('click',()=>{leaveRoom();mode='none';show('pOnline');});
-$('bCreate').addEventListener('click',createRoom);
-$('bJoin').addEventListener('click',()=>{const c=$('codeIn').value.trim();if(c.length!==4){setStatus('請輸入 4 位房間代碼');return;}joinRoom(c);});
+$('bCreate').addEventListener('click',()=>{const n=getName();connect(()=>send({t:'create',name:n}));});
+$('bJoin').addEventListener('click',()=>{
+  const c=$('codeIn').value.trim();if(c.length!==4){setStatus('請輸入 4 位房間代碼');return;}
+  const n=getName();connect(()=>send({t:'join',name:n,code:c}));
+});
+$('bStart').addEventListener('click',()=>send({t:'start'}));
+$('bLeave').addEventListener('click',()=>{leaveRoom();show('pOnline');});
 $('onBack').addEventListener('click',()=>show('pMenu'));
 
 /* ---------- 選單 ---------- */
 $('bEndless').addEventListener('click',()=>{initAudio();startEndless();});
-$('bOnline').addEventListener('click',()=>{initAudio();setStatus(initFirebase()?'':'(尚未設定 Firebase,線上模式暫時無法使用)');show('pOnline');});
+$('bOnline').addEventListener('click',()=>{initAudio();setStatus('');show('pOnline');});
 $('bHow').addEventListener('click',()=>show('pHow'));
 $('howBack').addEventListener('click',()=>show('pMenu'));
 
@@ -523,10 +511,12 @@ let last=performance.now();
 function loop(now){
   requestAnimationFrame(loop);
   const dt=Math.min(0.05,(now-last)/1000);last=now;
-  if(running){
+  const frozen=pauseOpen&&mode==='endless';
+  if(running&&!frozen){
     let mx=joy.x,mz=joy.y;
     if(keys.KeyW||keys.ArrowUp)mz-=1;if(keys.KeyS||keys.ArrowDown)mz+=1;
     if(keys.KeyA||keys.ArrowLeft)mx-=1;if(keys.KeyD||keys.ArrowRight)mx+=1;
+    if(pauseOpen){mx=0;mz=0;}
     const l=Math.hypot(mx,mz);if(l>1){mx/=l;mz/=l;}
     player.moving=l>0.15;
     const sp=(player.crouch?2.4:5.5)*dt;
@@ -545,18 +535,14 @@ function loop(now){
         e.vol=e.crouch?0.3:(e.moving?0.8:0.45);
       }
       timeLeft-=dt;$('tTime').textContent=fmt(timeLeft);
-      if(now-net.lastWrite>120&&net.myRef){
-        net.lastWrite=now;
-        net.myRef.update({x:Math.round(player.x*100)/100,z:Math.round(player.z*100)/100,c:player.crouch?1:0,m:player.moving?1:0});
-      }
+      if(now-net.lastSend>100){net.lastSend=now;send({t:'pos',x:player.x,z:player.z,c:player.crouch?1:0,m:player.moving?1:0});}
       net.sbT-=dt;if(net.sbT<=0){net.sbT=0.5;updateBoard();}
-      if(timeLeft<=0)endOnline();
     }
     singAll(dt);setListener();
     if(flashBad>0)flashBad-=dt;
     if(seqTimer>0){seqTimer-=dt;if(seqTimer<=0){seqIn=[];drawSeq();}}
+    if(msgT>0){msgT-=dt;if(msgT<=0)$('msg').textContent='';}
   }
-  if(msgT>0){msgT-=dt;if(msgT<=0)$('msg').textContent='';}
   draw();
 }
 refreshMenu();show('pMenu');
