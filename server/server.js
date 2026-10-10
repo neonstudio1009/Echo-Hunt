@@ -2,11 +2,12 @@ const http = require('http');
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 3000;
+const DB_URL = (process.env.FIREBASE_DB_URL || '').replace(/\/+$/, '');
 const RANGE = 12, ARENA = 45, DURATION = 180, MAXP = 8;
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-  res.end('Echo Hunt server OK');
+  res.end('Echo Hunt server OK' + (DB_URL ? ' (leaderboard: persistent)' : ' (leaderboard: memory only)'));
 });
 const wss = new WebSocketServer({ server });
 const rooms = new Map();
@@ -21,7 +22,65 @@ function cleanLook(l) {
   l = l || {};
   return { s: tag(l.s) === 'none' ? 'yellow' : tag(l.s), a: tag(l.a), t: tag(l.t) };
 }
+const validPid = v => typeof v === 'string' && /^[a-z0-9]{8,24}$/.test(v);
 
+/* ---------- 排行榜 ---------- */
+// board[pid] = { n:名字, e:無盡最高淘汰, et:該局秒數, o:線上累計淘汰, w:線上勝場 }
+let board = {};
+const dirty = new Set();
+
+async function loadBoard() {
+  if (!DB_URL) { console.log('FIREBASE_DB_URL 未設定:排行榜只存在記憶體'); return; }
+  try {
+    const r = await fetch(DB_URL + '/lb.json');
+    const d = await r.json();
+    if (d && typeof d === 'object') board = d;
+    console.log('排行榜已載入:' + Object.keys(board).length + ' 筆');
+  } catch (e) { console.log('排行榜載入失敗:' + e.message); }
+}
+function entry(pid, name) {
+  if (!board[pid]) {
+    if (Object.keys(board).length > 20000) return null;
+    board[pid] = { n: name, e: 0, et: 0, o: 0, w: 0 };
+  }
+  if (name) board[pid].n = name;
+  return board[pid];
+}
+function markDirty(pid) { dirty.add(pid); }
+setInterval(() => {
+  if (!DB_URL || dirty.size === 0) return;
+  for (const pid of dirty) {
+    fetch(DB_URL + '/lb/' + pid + '.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(board[pid])
+    }).catch(() => {});
+  }
+  dirty.clear();
+}, 5000);
+
+function sortedBoard(kind) {
+  const arr = Object.keys(board).map(pid => ({ pid, ...board[pid] }));
+  if (kind === 'online') {
+    return arr.filter(x => (x.o || 0) > 0).sort((a, b) => (b.o - a.o) || ((b.w || 0) - (a.w || 0)));
+  }
+  return arr.filter(x => (x.e || 0) > 0).sort((a, b) => (b.e - a.e) || ((a.et || 0) - (b.et || 0)));
+}
+function lbReply(kind, pid) {
+  const list = sortedBoard(kind);
+  const rows = list.slice(0, 20).map(x => ({
+    n: x.n,
+    v: kind === 'online' ? x.o : x.e,
+    s: kind === 'online' ? (x.w || 0) : (x.et || 0),
+    me: x.pid === pid
+  }));
+  let me = null;
+  const idx = list.findIndex(x => x.pid === pid);
+  if (idx >= 0) me = { rank: idx + 1, v: kind === 'online' ? list[idx].o : list[idx].e, s: kind === 'online' ? (list[idx].w || 0) : (list[idx].et || 0) };
+  return { t: 'lb', kind, rows, me, total: list.length, persist: !!DB_URL };
+}
+
+/* ---------- 房間 ---------- */
 function send(ws, o) { if (ws.readyState === 1) ws.send(JSON.stringify(o)); }
 function broadcast(room, o) { for (const p of room.players.values()) send(p.ws, o); }
 function lobbyMsg(room) {
@@ -34,8 +93,8 @@ function newCode() {
 }
 function cleanName(n) { return String(n || '玩家').replace(/[<>&]/g, '').trim().slice(0, 8) || '玩家'; }
 
-function joinRoom(ws, room, name, look) {
-  const p = { id: rid(), ws, name: cleanName(name), look: cleanLook(look), x: 0, z: 0, c: 0, m: 0, mel: randMel(), sc: 0, room };
+function joinRoom(ws, room, name, look, pid) {
+  const p = { id: rid(), pid: validPid(pid) ? pid : null, ws, name: cleanName(name), look: cleanLook(look), x: 0, z: 0, c: 0, m: 0, mel: randMel(), sc: 0, room };
   ws.player = p;
   room.players.set(p.id, p);
   send(ws, { t: 'joined', code: room.code, id: p.id });
@@ -57,7 +116,17 @@ function startRound(room) {
 function endRound(room) {
   if (room.state !== 'playing') return;
   room.state = 'lobby';
-  const ranking = [...room.players.values()].sort((a, b) => b.sc - a.sc).map(p => ({ id: p.id, name: p.name, sc: p.sc }));
+  const sorted = [...room.players.values()].sort((a, b) => b.sc - a.sc);
+  const ranking = sorted.map(p => ({ id: p.id, name: p.name, sc: p.sc }));
+  if (sorted.length >= 2 && sorted[0].sc > 0) {
+    const top = sorted[0].sc;
+    for (const p of sorted) {
+      if (p.sc === top && p.pid) {
+        const e = entry(p.pid, p.name);
+        if (e) { e.w = (e.w || 0) + 1; markDirty(p.pid); }
+      }
+    }
+  }
   broadcast(room, { t: 'end', ranking });
   broadcast(room, lobbyMsg(room));
 }
@@ -74,6 +143,7 @@ function leave(ws) {
 
 wss.on('connection', ws => {
   ws.isAlive = true;
+  ws.lastSubmit = 0;
   ws.on('pong', () => { ws.isAlive = true; });
   ws.on('message', raw => {
     ws.isAlive = true;
@@ -85,7 +155,7 @@ wss.on('connection', ws => {
         if (p) return;
         const room = { code: newCode(), state: 'lobby', players: new Map(), timer: null };
         rooms.set(room.code, room);
-        joinRoom(ws, room, m.name, m.look);
+        joinRoom(ws, room, m.name, m.look, m.pid);
         break;
       }
       case 'join': {
@@ -94,7 +164,7 @@ wss.on('connection', ws => {
         if (!room) return send(ws, { t: 'err', msg: '找不到這個房間' });
         if (room.state === 'playing') return send(ws, { t: 'err', msg: '這個房間正在遊戲中,請稍後再加入' });
         if (room.players.size >= MAXP) return send(ws, { t: 'err', msg: '房間已滿(最多 8 人)' });
-        joinRoom(ws, room, m.name, m.look);
+        joinRoom(ws, room, m.name, m.look, m.pid);
         break;
       }
       case 'look':
@@ -121,6 +191,10 @@ wss.on('connection', ws => {
         }
         if (hit) {
           p.sc++;
+          if (p.pid) {
+            const e = entry(p.pid, p.name);
+            if (e) { e.o = (e.o || 0) + 1; markDirty(p.pid); }
+          }
           const pos = randPos();
           const hx = hit.x, hz = hit.z;
           Object.assign(hit, pos, { mel: randMel() });
@@ -131,6 +205,24 @@ wss.on('connection', ws => {
         }
         break;
       }
+      case 'submit': {
+        const now = Date.now();
+        if (now - ws.lastSubmit < 5000) return send(ws, { t: 'ack', ok: false });
+        ws.lastSubmit = now;
+        if (!validPid(m.pid)) return send(ws, { t: 'ack', ok: false });
+        const score = Math.floor(+m.score), time = Math.floor(+m.time);
+        if (!(score >= 0 && score <= 500) || !(time >= 0 && time <= 7200) || score > time / 2.5 + 3) return send(ws, { t: 'ack', ok: false });
+        const e = entry(m.pid, cleanName(m.name));
+        if (!e) return send(ws, { t: 'ack', ok: false });
+        if (score > (e.e || 0) || (score === e.e && time < (e.et || 1e9))) { e.e = score; e.et = time; }
+        markDirty(m.pid);
+        const r = lbReply('endless', m.pid);
+        send(ws, { t: 'ack', ok: true, rank: r.me ? r.me.rank : null, best: e.e, persist: !!DB_URL });
+        break;
+      }
+      case 'lb':
+        send(ws, lbReply(m.kind === 'online' ? 'online' : 'endless', validPid(m.pid) ? m.pid : ''));
+        break;
       case 'leave':
         leave(ws);
         break;
@@ -161,4 +253,6 @@ setInterval(() => {
   });
 }, 30000);
 
-server.listen(PORT, () => console.log('Echo Hunt server on ' + PORT));
+loadBoard().then(() => {
+  server.listen(PORT, () => console.log('Echo Hunt server on ' + PORT));
+});
