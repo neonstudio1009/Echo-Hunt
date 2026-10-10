@@ -27,22 +27,27 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0b0e24;font-family:-a
 #k1{background:#d94646}#k2{background:#2fa84f}#k3{background:#3a6fe0}
 #crouch{position:fixed;z-index:6;right:16px;bottom:106px;width:84px;height:44px;border-radius:12px;background:#555d;border:2px solid #fff8;display:flex;align-items:center;justify-content:center;font-weight:700;touch-action:none}
 #crouch.on{background:#a855f7}
-.panel{position:fixed;z-index:10;inset:0;background:radial-gradient(circle at 50% 30%,#1c2360,#05060f 70%);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;overflow-y:auto}
+.panel{position:fixed;z-index:10;inset:0;background:radial-gradient(circle at 50% 30%,#1c2360,#05060f 70%);display:none;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:12px 16px calc(14px + env(safe-area-inset-bottom));overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.panel>:first-child{margin-top:auto}
+.panel>:last-child{margin-bottom:auto}
 .panel.dim{z-index:12;background:rgba(5,6,15,.8)}
 .card{background:#1a2050;border:2px solid #fff3;border-radius:20px;padding:24px 20px;width:min(320px,90%);box-shadow:0 10px 40px #000a}
 .panel h1{font-size:40px;margin:0 0 4px;background:linear-gradient(90deg,#7df,#c6f);-webkit-background-clip:text;color:transparent}
 .panel h2{margin:0 0 10px;color:#cdf}
 .panel p{max-width:460px;line-height:1.6;margin:6px 0;font-size:15px;color:#cde}
-.btn{display:block;width:260px;max-width:100%;margin:8px auto;padding:14px 20px;font-size:18px;font-weight:800;border:0;border-radius:14px;background:linear-gradient(90deg,#4cc9f0,#b86bff);color:#fff;cursor:pointer}
+.btn{display:block;position:relative;width:220px;max-width:100%;margin:8px auto;padding:13px 16px;font-size:18px;font-weight:800;border:0;border-radius:14px;background:linear-gradient(90deg,#4cc9f0,#b86bff);color:#fff;cursor:pointer}
 .btn.alt{background:#2b3470}
 .btn.gray{background:#444a70}
-input[type=text]{width:260px;padding:12px;border-radius:12px;border:2px solid #fff4;background:#0008;color:#fff;font-size:18px;text-align:center;margin:6px 0;-webkit-user-select:text;user-select:text}
-#coinBar,#shopCoin{font-size:20px;font-weight:800;color:#ffd84a;margin-bottom:10px}
+.btn.off{background:#555;color:#bbb}
+.badge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#ff3b3b;border:2px solid #fff;display:none}
+#menuBtns{display:grid;grid-auto-flow:column;grid-template-rows:repeat(3,auto);gap:10px 12px;justify-content:center;margin:8px 0}
+#menuBtns .btn{width:clamp(130px,41vw,190px);margin:0;padding:13px 8px;font-size:17px}
+input[type=text]{width:220px;padding:12px;border-radius:12px;border:2px solid #fff4;background:#0008;color:#fff;font-size:18px;text-align:center;margin:6px 0;-webkit-user-select:text;user-select:text}
+#coinBar,#shopCoin,#dailyCoin{font-size:20px;font-weight:800;color:#ffd84a;margin-bottom:10px}
 #plist{margin:10px 0;font-size:17px;line-height:1.8}
 #code{font-size:46px;letter-spacing:8px;font-weight:900;color:#ffd84a}
 label{font-size:14px;color:#cde}
 .small{font-size:13px;color:#9ab}
-#pShop{justify-content:flex-start;padding-top:14px}
 #shopPrev{width:110px;height:110px;border-radius:20px;background:#10153a;border:2px solid #fff3}
 .tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap;justify-content:center}
 .tabs button{padding:8px 14px;border-radius:999px;border:2px solid #fff4;background:#1a2050;color:#fff;font-size:15px;font-weight:700}
@@ -57,43 +62,51 @@ label{font-size:14px;color:#cde}
 .item button.buy{background:#d98a1f}
 .item button.cant{background:#555}
 .item button.on{background:#2fa84f}
-#shopMsg{min-height:22px;font-weight:700;color:#ffe9a0}
-/* ===== 手機版面修正 ===== */
-.panel{
-  justify-content:flex-start !important;
-  touch-action:pan-y;
-  overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;
-  padding:12px 16px calc(14px + env(safe-area-inset-bottom));
-}
-.panel>:first-child{margin-top:auto}
-.panel>:last-child{margin-bottom:auto}
-
+#shopMsg,#dailyMsg{min-height:22px;font-weight:700;color:#ffe9a0}
+.sec{width:min(520px,100%);background:#1a2050;border:2px solid #fff2;border-radius:18px;padding:14px 12px;margin:8px 0}
+.sec h3{margin:0 0 8px;font-size:17px;color:#cdf}
+#dayRow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:10px}
+.day{background:#10153a;border:2px solid #fff2;border-radius:10px;padding:6px 0;font-size:11px;line-height:1.4}
+.day b{display:block;font-size:14px;color:#ffd84a}
+.day.done{background:#1f4d33;border-color:#3ddc6a}
+.day.today{border-color:#ffd84a;box-shadow:0 0 10px #ffd84a88}
+.day.d7{border-color:#ff9ec7}
+.q{background:#10153a;border-radius:12px;padding:10px;margin:8px 0;text-align:left}
+.q .t{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:14px}
+.q .bar{height:8px;background:#fff2;border-radius:5px;margin:8px 0;overflow:hidden}
+.q .bar i{display:block;height:100%;background:linear-gradient(90deg,#4cc9f0,#b86bff)}
+.q .b{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#9ab}
+.q button{padding:6px 14px;border-radius:10px;border:0;font-weight:800;font-size:13px;color:#fff;background:#2fa84f}
+.q button.off{background:#555;color:#bbb}
+#lbList{width:min(480px,100%)}
+.lbrow{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#10153a;border-radius:12px;margin:5px 0;text-align:left;font-size:15px;border:2px solid transparent}
+.lbrow.me{border-color:#ffd84a;background:#2a2a4a}
+.lbrow .rk{width:34px;font-weight:900;color:#ffd84a;text-align:center}
+.lbrow .nm{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbrow .vl{font-weight:800}
+.lbrow .sb{font-size:12px;color:#9ab;min-width:64px;text-align:right}
+#lbMe{min-height:22px;font-weight:700;color:#ffe9a0;margin:6px 0}
+/* ===== 短螢幕 / 橫向手機 ===== */
 @media (max-height:600px){
   .panel h1{font-size:28px;margin:0}
   .panel h2{font-size:18px;margin:0 0 6px}
   .panel p{margin:3px 0;font-size:13px;line-height:1.4}
   .btn{padding:9px 14px;font-size:16px;margin:5px auto}
+  #menuBtns{gap:8px 12px;margin:6px 0}
+  #menuBtns .btn{padding:9px 8px;font-size:16px}
   #coinBar,#shopCoin,#dailyCoin{font-size:16px;margin-bottom:4px}
   #code{font-size:34px}
   #shopPrev{width:70px;height:70px}
   input[type=text]{padding:8px;font-size:16px;margin:3px 0}
   .sec{padding:8px;margin:5px 0}
   .tabs{margin:5px 0}
-}
-
-@media (max-height:600px) and (orientation:landscape){
-  #pMenu{flex-direction:row;flex-wrap:wrap;align-content:flex-start;justify-content:center;gap:0 12px}
-  #pMenu>h1,#pMenu>p,#pMenu>#coinBar,#pMenu>label{flex:0 0 100%}
-  #pMenu>:first-child{margin-top:0}
-  #pMenu>:last-child{margin-bottom:0}
-  #pMenu>.btn{flex:0 0 min(260px,44%);width:auto}
+  .lbrow{padding:5px 10px;margin:3px 0}
 }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="hud"><div id="tScore">淘汰 0</div><div id="tTime">0:00</div><div id="tCoin">🪙 0</div></div>
+<div id="hud"><div id="tScore">淘汰 0</div><div id="tTime">0:00</div><div id="tCoin">💰 0</div></div>
 <button id="pauseBtn" aria-label="暫停"><span></span><span></span></button>
 <div id="danger"><div id="dangerFill"></div></div>
 <div id="seq"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
@@ -106,11 +119,15 @@ label{font-size:14px;color:#cde}
 <div class="panel" id="pMenu">
   <h1>聲紋獵人</h1>
   <p class="small">ECHO HUNT</p>
-  <div id="coinBar">🪙 0</div>
-  <button class="btn" id="bEndless">無盡模式</button>
-  <button class="btn" id="bOnline">線上多人</button>
-  <button class="btn alt" id="bShop">商店</button>
-  <button class="btn alt" id="bHow">玩法介紹</button>
+  <div id="coinBar">💰 0</div>
+  <div id="menuBtns">
+    <button class="btn" id="bEndless">無盡模式</button>
+    <button class="btn" id="bOnline">線上多人</button>
+    <button class="btn alt" id="bLB">排行榜</button>
+    <button class="btn alt" id="bDaily">每日任務<span class="badge" id="dailyBadge"></span></button>
+    <button class="btn alt" id="bShop">商店</button>
+    <button class="btn alt" id="bHow">玩法介紹</button>
+  </div>
   <label><input type="checkbox" id="assist"> 輔助模式(範圍外也顯示顏色)</label>
   <p class="small" id="bestLine"></p>
 </div>
@@ -119,15 +136,46 @@ label{font-size:14px;color:#cde}
   <h2>玩法介紹</h2>
   <p>每個角色都有一段 3 音旋律。<b>你聽不到自己的</b>,但能聽到別人的。</p>
   <p>走進對手的白色虛線圈內,他唱歌時會冒出彩色圈圈:紅=低、綠=中、藍=高。<b>圈外的對手沒有顏色,只能用耳朵聽。</b></p>
-  <p>照順序按出他的 3 個音就能淘汰他,每淘汰一人獲得 🪙10。代幣可以到商店買造型和道具。</p>
+  <p>照順序按出他的 3 個音就能淘汰他,每淘汰一人獲得 💰10。代幣可以到商店買造型和道具。</p>
+  <p>每天記得簽到和完成每日任務,可以拿到更多代幣。無盡模式和線上多人的成績會進入排行榜。</p>
   <p>彈錯會發出噪音,暴露你的位置。蹲下聲音較小。</p>
   <p>🎧 請戴耳機,左右聲音就是方向。<br>🎮 左下搖桿(電腦 WASD),右下三鍵(電腦 1 2 3),C 蹲下,Esc 暫停。</p>
   <button class="btn" id="howBack">返回</button>
 </div>
 
+<div class="panel" id="pLB">
+  <h2>🏆 排行榜</h2>
+  <div class="tabs" id="lbTabs">
+    <button data-k="endless" class="on">無盡模式</button>
+    <button data-k="online">線上多人</button>
+  </div>
+  <p class="small" id="lbStatus"></p>
+  <div id="lbList"></div>
+  <div id="lbMe"></div>
+  <button class="btn alt" id="lbRefresh">重新整理</button>
+  <button class="btn gray" id="lbBack">返回</button>
+</div>
+
+<div class="panel" id="pDaily">
+  <h2>每日任務與簽到</h2>
+  <div id="dailyCoin">💰 0</div>
+  <div class="sec">
+    <h3>📅 7 天簽到</h3>
+    <div id="dayRow"></div>
+    <button class="btn" id="bCheckin" style="width:100%;margin:0">簽到領取</button>
+  </div>
+  <div class="sec">
+    <h3>🎯 今日任務</h3>
+    <div id="questList"></div>
+    <p class="small" id="bonusLine"></p>
+  </div>
+  <div id="dailyMsg"></div>
+  <button class="btn gray" id="dailyBack">返回</button>
+</div>
+
 <div class="panel" id="pShop">
   <h2>商店</h2>
-  <div id="shopCoin">🪙 0</div>
+  <div id="shopCoin">💰 0</div>
   <canvas id="shopPrev" width="220" height="220"></canvas>
   <div class="tabs" id="shopTabs">
     <button data-t="skin" class="on">顏色</button>
@@ -162,6 +210,7 @@ label{font-size:14px;color:#cde}
 <div class="panel" id="pResult">
   <h2 id="resTitle">結束</h2>
   <p id="resBody"></p>
+  <p id="upNote" class="small"></p>
   <button class="btn" id="resAgain">再來一局</button>
   <button class="btn gray" id="resMenu">回主畫面</button>
 </div>
@@ -176,7 +225,7 @@ label{font-size:14px;color:#cde}
 </div>
 
 <script>
-/* ====== 線上多人設定:把 Render 給你的網址貼在這裡(用 wss://) ====== */
+/* ====== 線上多人設定:Render 伺服器網址(用 wss://) ====== */
 const SERVER_URL = "wss://echo-hunt-3jlx.onrender.com";
 /* ================================================================ */
 
@@ -196,6 +245,16 @@ function show(id){
 function ls(k,d){try{const v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function lsJSON(k,d){try{return JSON.parse(ls(k,JSON.stringify(d)));}catch(e){return d;}}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function fmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+
+let pid=ls('echoPid','');
+if(!/^[a-z0-9]{16}$/.test(pid)){
+  const ch='abcdefghijklmnopqrstuvwxyz0123456789';pid='';
+  for(let i=0;i<16;i++)pid+=ch[Math.floor(Math.random()*ch.length)];
+  lsSet('echoPid',pid);
+}
+function playerName(){return (ls('echoName','')||'玩家').slice(0,8);}
 
 /* ---------- 代幣 / 商店資料 ---------- */
 let coins=+ls('echoCoins',0), bestEndless=+ls('echoBestEndless',0), assist=ls('echoAssist','0')==='1';
@@ -216,7 +275,8 @@ const CAT={
     {id:'cat',name:'貓耳',price:150,ds:'可愛的貓耳朵'},
     {id:'halo',name:'光環',price:250,ds:'天使般的光環'},
     {id:'horns',name:'惡魔角',price:250,ds:'小惡魔造型'},
-    {id:'crown',name:'皇冠',price:500,ds:'王者的象徵'}
+    {id:'crown',name:'皇冠',price:500,ds:'王者的象徵'},
+    {id:'ribbon',name:'蝴蝶結',price:9999,lock:true,ds:'簽到第 7 天限定獎勵'}
   ],
   trail:[
     {id:'none',name:'無',price:0,ds:'沒有軌跡'},
@@ -235,13 +295,188 @@ let equip=Object.assign({skin:'yellow',acc:'none',trail:'none'},lsJSON('echoEqui
 let inv=Object.assign({shield:0,double:0},lsJSON('echoInv',{}));
 function saveShop(){lsSet('echoOwned',JSON.stringify(owned));lsSet('echoEquip',JSON.stringify(equip));lsSet('echoInv',JSON.stringify(inv));}
 function itemOf(type,id){return CAT[type].find(i=>i.id===id);}
-function isOwned(type,id){const it=itemOf(type,id);return it&&(it.price===0||owned.indexOf(type+':'+id)>=0);}
+function isOwned(type,id){const it=itemOf(type,id);return !!it&&(it.price===0||owned.indexOf(type+':'+id)>=0);}
 function myLook(){return {s:equip.skin,a:equip.acc,t:equip.trail};}
-function refreshCoins(){const t='🪙 '+coins;$('coinBar').textContent=t;$('tCoin').textContent=t;$('shopCoin').textContent=t;}
+function refreshCoins(){const t='💰 '+coins;$('coinBar').textContent=t;$('tCoin').textContent=t;$('shopCoin').textContent=t;$('dailyCoin').textContent=t;}
 function addCoins(n){coins+=n;lsSet('echoCoins',coins);refreshCoins();}
 $('assist').checked=assist;
 $('assist').addEventListener('change',e=>{assist=e.target.checked;lsSet('echoAssist',assist?'1':'0');});
-function refreshMenu(){refreshCoins();$('bestLine').textContent='無盡模式最高淘汰:'+bestEndless;}
+function refreshMenu(){refreshCoins();$('bestLine').textContent='無盡模式最高淘汰:'+bestEndless;$('dailyBadge').style.display=dailyHasReward()?'block':'none';}
+
+/* ---------- 每日簽到 / 每日任務 ---------- */
+const CHECKIN=[20,30,40,50,60,80,150];
+const QDEF={
+  kills:{name:n=>'淘汰 '+n+' 人',t:[5,8,12],r:[30,50,80]},
+  survive:{name:n=>'無盡模式累計存活 '+(n/60)+' 分鐘',t:[180,300,480],r:[30,50,80]},
+  crouch:{name:n=>'蹲下狀態淘汰 '+n+' 人',t:[2,4,6],r:[30,50,80]},
+  streak:{name:n=>'連續 '+n+' 次淘汰都沒彈錯',t:[2,3,5],r:[30,50,80]},
+  endlessRuns:{name:n=>'玩 '+n+' 局無盡模式',t:[1,2,3],r:[20,35,50]},
+  onlineKills:{name:n=>'線上多人淘汰 '+n+' 人',t:[2,4,6],r:[40,60,90],online:true},
+  onlineGames:{name:n=>'完成 '+n+' 場線上多人',t:[1,2,3],r:[40,60,90],online:true},
+  buy:{name:n=>'在商店購買 '+n+' 件商品',t:[1,1,2],r:[20,20,40]}
+};
+const BONUS=50;
+function pad(n){return n<10?'0'+n:''+n;}
+function dstr(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function todayStr(){return dstr(new Date());}
+function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return dstr(d);}
+let checkin=Object.assign({last:'',streak:0},lsJSON('echoCheckin',{}));
+let daily=lsJSON('echoDaily',{date:'',quests:[],bonus:false});
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function seededRand(seed){let s=seed||1;return ()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};}
+function genDaily(){
+  const ds=todayStr(),r=seededRand(hashStr(ds));
+  const ids=Object.keys(QDEF);
+  for(let i=ids.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]];}
+  const pick=[];let online=0;
+  for(const id of ids){
+    if(QDEF[id].online){if(online>=1)continue;online++;}
+    pick.push(id);if(pick.length===3)break;
+  }
+  daily={date:ds,quests:pick.map(id=>({id,tier:Math.floor(r()*3),p:0,claimed:false,notified:false})),bonus:false};
+  saveDaily();
+}
+function saveDaily(){lsSet('echoDaily',JSON.stringify(daily));}
+function ensureDaily(){if(daily.date!==todayStr()||!daily.quests||daily.quests.length!==3)genDaily();}
+function qTarget(q){return QDEF[q.id].t[q.tier];}
+function qReward(q){return QDEF[q.id].r[q.tier];}
+function qDone(q){return q.p>=qTarget(q);}
+function checkNotify(q){
+  if(qDone(q)&&!q.notified){q.notified=true;if(running)say('✅ 任務完成:'+QDEF[q.id].name(qTarget(q))+'(回主畫面領取)',3);}
+}
+function questAdd(id,n){
+  ensureDaily();let ch=false;
+  for(const q of daily.quests)if(q.id===id&&!q.claimed&&!qDone(q)){q.p=Math.min(qTarget(q),q.p+n);ch=true;checkNotify(q);}
+  if(ch)saveDaily();
+}
+function questMax(id,v){
+  ensureDaily();let ch=false;
+  for(const q of daily.quests)if(q.id===id&&!q.claimed&&v>q.p&&!qDone(q)){q.p=Math.min(qTarget(q),v);ch=true;checkNotify(q);}
+  if(ch)saveDaily();
+}
+function checkinDone(){
+  const t=todayStr();
+  if(checkin.last===t)return checkin.streak;
+  if(checkin.last===yesterdayStr())return checkin.streak>=7?0:checkin.streak;
+  return 0;
+}
+function canCheckin(){return checkin.last!==todayStr();}
+function dailyHasReward(){
+  ensureDaily();
+  if(canCheckin())return true;
+  return daily.quests.some(q=>qDone(q)&&!q.claimed);
+}
+function dailyMsg(t){$('dailyMsg').textContent=t;}
+function doCheckin(){
+  if(!canCheckin()){dailyMsg('今天已經簽到過了');return;}
+  const day=checkinDone()+1;
+  const rw=CHECKIN[day-1];
+  checkin={last:todayStr(),streak:day};lsSet('echoCheckin',JSON.stringify(checkin));
+  addCoins(rw);
+  let t='簽到成功!第 '+day+' 天,獲得 💰'+rw;
+  if(day===7){
+    if(owned.indexOf('acc:ribbon')<0){owned.push('acc:ribbon');saveShop();t+=',並獲得限定飾品「蝴蝶結」🎀';}
+  }
+  dailyMsg(t);renderDaily();refreshMenu();
+}
+function claimQuest(i){
+  const q=daily.quests[i];
+  if(!q||q.claimed||!qDone(q))return;
+  q.claimed=true;addCoins(qReward(q));
+  let t='領取成功 💰'+qReward(q);
+  if(!daily.bonus&&daily.quests.every(x=>x.claimed)){daily.bonus=true;addCoins(BONUS);t+=',全部完成再獎勵 💰'+BONUS+'!';}
+  saveDaily();dailyMsg(t);renderDaily();refreshMenu();
+}
+function renderDaily(){
+  ensureDaily();refreshCoins();
+  const done=checkinDone(),can=canCheckin();
+  const row=$('dayRow');row.innerHTML='';
+  CHECKIN.forEach((rw,i)=>{
+    const d=document.createElement('div');d.className='day';
+    const n=i+1;
+    if(n<=done)d.classList.add('done');
+    if(can&&n===done+1)d.classList.add('today');
+    if(n===7)d.classList.add('d7');
+    d.innerHTML='第'+n+'天<b>'+(n<=done?'✓':'💰'+rw)+'</b>'+(n===7?'🎀':'');
+    row.appendChild(d);
+  });
+  const b=$('bCheckin');
+  if(can){b.textContent='簽到領取 💰'+CHECKIN[done];b.classList.remove('off');}
+  else{b.textContent='今天已簽到,明天再來';b.classList.add('off');}
+  const ql=$('questList');ql.innerHTML='';
+  daily.quests.forEach((q,i)=>{
+    const tg=qTarget(q),dn=qDone(q);
+    const el=document.createElement('div');el.className='q';
+    const shown=QDEF[q.id].name(tg);
+    const pv=q.id==='survive'?Math.floor(q.p)+'/'+tg+' 秒':Math.floor(q.p)+'/'+tg;
+    el.innerHTML='<div class="t"><span>'+shown+'</span><span>💰'+qReward(q)+'</span></div><div class="bar"><i style="width:'+Math.min(100,q.p/tg*100)+'%"></i></div><div class="b"><span>進度 '+pv+'</span></div>';
+    const bt=document.createElement('button');
+    if(q.claimed){bt.textContent='已領取';bt.className='off';}
+    else if(dn){bt.textContent='領取';bt.addEventListener('click',()=>claimQuest(i));}
+    else{bt.textContent='進行中';bt.className='off';}
+    el.querySelector('.b').appendChild(bt);
+    ql.appendChild(el);
+  });
+  $('bonusLine').textContent=daily.bonus?'今日全部完成獎勵已領取 ✓':'三個任務全部領取,再額外獲得 💰'+BONUS;
+}
+function openDaily(){show('pDaily');dailyMsg('');renderDaily();}
+$('bDaily').addEventListener('click',openDaily);
+$('bCheckin').addEventListener('click',doCheckin);
+$('dailyBack').addEventListener('click',()=>{refreshMenu();show('pMenu');});
+
+/* ---------- 與伺服器的一次性連線(排行榜用) ---------- */
+function quickSend(obj,onMsg,onFail){
+  if(SERVER_URL.indexOf('YOUR-APP')>=0){onFail('尚未設定伺服器網址');return;}
+  let done=false,ws;
+  const finish=(ok,m)=>{if(done)return;done=true;clearTimeout(to);try{ws.close();}catch(e){}ok?onMsg(m):onFail(m);};
+  const to=setTimeout(()=>finish(false,'連線逾時,請稍後再試'),90000);
+  try{ws=new WebSocket(SERVER_URL);}catch(e){finish(false,'無法連線');return;}
+  ws.onopen=()=>ws.send(JSON.stringify(obj));
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch(x){return;}if(m.t==='lb'||m.t==='ack')finish(true,m);};
+  ws.onerror=()=>finish(false,'連線失敗');
+  ws.onclose=()=>finish(false,'連線中斷');
+}
+
+/* ---------- 排行榜 ---------- */
+let lbKind='endless',lbToken=0;
+function renderLB(m){
+  const list=$('lbList');list.innerHTML='';
+  const medals=['🥇','🥈','🥉'];
+  if(!m.rows.length){list.innerHTML='<p class="small">還沒有人上榜,成為第一個吧!</p>';}
+  m.rows.forEach((r,i)=>{
+    const d=document.createElement('div');d.className='lbrow'+(r.me?' me':'');
+    const val=m.kind==='online'?r.v+' 淘汰':r.v+' 人';
+    const sub=m.kind==='online'?r.s+' 勝':fmt(r.s);
+    d.innerHTML='<div class="rk">'+(medals[i]||(i+1))+'</div><div class="nm">'+esc(r.n)+(r.me?'(你)':'')+'</div><div class="vl">'+val+'</div><div class="sb">'+sub+'</div>';
+    list.appendChild(d);
+  });
+  if(m.me){
+    const val=m.kind==='online'?m.me.v+' 淘汰、'+m.me.s+' 勝':m.me.v+' 人('+fmt(m.me.s)+')';
+    $('lbMe').textContent='你的排名:第 '+m.me.rank+' 名 / 共 '+m.total+' 人 — '+val;
+  }else{
+    $('lbMe').textContent=m.kind==='online'?'你還沒有線上多人的淘汰紀錄':'你還沒有無盡模式的成績,玩一局就會上榜';
+  }
+  $('lbStatus').textContent=m.persist?'':'⚠ 伺服器尚未連接資料庫,伺服器休眠或重啟後排行榜會重置';
+}
+function loadLB(kind){
+  lbKind=kind;const tok=++lbToken;
+  document.querySelectorAll('#lbTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===kind));
+  $('lbStatus').textContent='載入中…伺服器睡著時第一次約需 1 分鐘';$('lbList').innerHTML='';$('lbMe').textContent='';
+  quickSend({t:'lb',kind,pid},m=>{if(tok===lbToken)renderLB(m);},msg=>{if(tok===lbToken)$('lbStatus').textContent='⚠ '+msg;});
+}
+function openLB(){show('pLB');loadLB(lbKind);}
+document.querySelectorAll('#lbTabs button').forEach(b=>b.addEventListener('click',()=>loadLB(b.dataset.k)));
+$('bLB').addEventListener('click',openLB);
+$('lbRefresh').addEventListener('click',()=>loadLB(lbKind));
+$('lbBack').addEventListener('click',()=>{lbToken++;refreshMenu();show('pMenu');});
+function submitEndless(sc,secs){
+  const note=$('upNote');
+  if(sc<=0){note.textContent='';return;}
+  note.textContent='成績上傳中…';
+  quickSend({t:'submit',pid,name:playerName(),score:sc,time:Math.floor(secs)},m=>{
+    note.textContent=m.ok?('✅ 成績已上傳'+(m.rank?',目前無盡榜第 '+m.rank+' 名':'')+(m.persist?'':'(伺服器未連接資料庫,可能會重置)')):'⚠ 成績沒有被接受';
+  },msg=>{note.textContent='⚠ 成績上傳失敗:'+msg;});
+}
 
 /* ---------- 角色外觀繪製 ---------- */
 let clockT=0;
@@ -286,6 +521,12 @@ function drawAvatar(g,x,y,r,look,t,remote){
   }else if(a==='crown'){
     g.fillStyle='#ffd700';g.strokeStyle='#8a6a00';g.lineWidth=2;
     g.beginPath();g.moveTo(x-r*0.8,y-r*0.8);g.lineTo(x-r*0.8,y-r*1.55);g.lineTo(x-r*0.4,y-r*1.15);g.lineTo(x,y-r*1.7);g.lineTo(x+r*0.4,y-r*1.15);g.lineTo(x+r*0.8,y-r*1.55);g.lineTo(x+r*0.8,y-r*0.8);g.closePath();g.fill();g.stroke();
+  }else if(a==='ribbon'){
+    const cx=x+r*0.55,cy=y-r*0.95;
+    g.fillStyle='#ff6fa8';g.strokeStyle='#b8316a';g.lineWidth=2;
+    g.beginPath();g.moveTo(cx,cy);g.lineTo(cx-r*0.6,cy-r*0.38);g.lineTo(cx-r*0.6,cy+r*0.38);g.closePath();g.fill();g.stroke();
+    g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+r*0.6,cy-r*0.38);g.lineTo(cx+r*0.6,cy+r*0.38);g.closePath();g.fill();g.stroke();
+    g.fillStyle='#ff3d86';g.beginPath();g.arc(cx,cy,r*0.17,0,6.283);g.fill();
   }
 }
 
@@ -364,7 +605,7 @@ function randPos(){let x,z,t=0;do{x=(Math.random()-.5)*84;z=(Math.random()-.5)*8
 /* ---------- 遊戲狀態 ---------- */
 const player={x:0,z:0,crouch:false,moving:false,tt:0};
 let mode='none';
-let running=false,score=0,timeLeft=180,elapsed=0,danger=0,seqIn=[],seqTimer=0,msgT=0,alertT=0,flashBad=0,coinMul=1,runCoins=0;
+let running=false,score=0,timeLeft=180,elapsed=0,danger=0,seqIn=[],seqTimer=0,msgT=0,alertT=0,flashBad=0,coinMul=1,runCoins=0,killStreak=0,surviveAcc=0;
 const ents=[];
 const boom=[];
 function randMelody(){return [0,1,2].map(()=>Math.floor(Math.random()*3));}
@@ -374,6 +615,13 @@ function drawSeq(){document.querySelectorAll('.dot').forEach((el,i)=>{el.style.b
 function newEnt(o){return Object.assign({x:0,z:0,mel:[],crouch:false,moving:false,vol:0.6,next:Math.random()*3,flash:0,noteIdx:0,panner:newPanner(),name:'',id:'',tt:0},o);}
 function removeEnt(e){try{e.panner.disconnect();}catch(x){}const i=ents.indexOf(e);if(i>=0)ents.splice(i,1);}
 function clearEnts(){while(ents.length)removeEnt(ents[0]);}
+function flushSurvive(){if(surviveAcc>0){questAdd('survive',surviveAcc);surviveAcc=0;}}
+function recordKill(isOnline){
+  killStreak++;questAdd('kills',1);questMax('streak',killStreak);
+  if(player.crouch)questAdd('crouch',1);
+  if(isOnline)questAdd('onlineKills',1);
+}
+function recordMiss(){killStreak=0;}
 
 /* ---------- 暫停 ---------- */
 function openPause(){
@@ -461,11 +709,13 @@ function pressNote(n){
     }
     if(hit){
       const gain=10*coinMul;
-      score++;winSound();addCoins(gain);runCoins+=gain;say('淘汰成功!🪙+'+gain,1.6);
+      score++;winSound();addCoins(gain);runCoins+=gain;say('淘汰成功!💰+'+gain,1.6);
       boom.push({x:hit.x,z:hit.z,t:0});$('tScore').textContent='淘汰 '+score;
       respawnBot(hit);danger=Math.max(0,danger-25);
+      recordKill(false);
     }else{
       buzz();flashBad=0.4;say('彈錯了!噪音暴露了你',1.6);alertT=3;danger=Math.min(100,danger+12);
+      recordMiss();
     }
   }
 }
@@ -568,11 +818,13 @@ function renderShop(){
     const ds=document.createElement('div');ds.className='ds';ds.textContent=it.ds;box.appendChild(ds);
     const b=document.createElement('button');
     if(shopTab==='cons'){
-      b.textContent='購買 🪙'+it.price;b.className=coins>=it.price?'buy':'cant';
+      b.textContent='購買 💰'+it.price;b.className=coins>=it.price?'buy':'cant';
     }else if(isOwned(shopTab,it.id)){
       b.textContent=eqd?'已裝備':'裝備';b.className=eqd?'on':'';
+    }else if(it.lock){
+      b.textContent='簽到限定';b.className='cant';
     }else{
-      b.textContent='購買 🪙'+it.price;b.className=coins>=it.price?'buy':'cant';
+      b.textContent='購買 💰'+it.price;b.className=coins>=it.price?'buy':'cant';
     }
     b.addEventListener('click',()=>itemAction(shopTab,it.id));
     box.appendChild(b);list.appendChild(box);
@@ -583,10 +835,11 @@ function itemAction(type,id){
   const it=itemOf(type,id);
   if(type==='cons'){
     if(coins<it.price){shopMsg('代幣不足');return;}
-    coins-=it.price;lsSet('echoCoins',coins);inv[id]++;saveShop();refreshCoins();shopMsg('購買成功:'+it.name);
+    coins-=it.price;lsSet('echoCoins',coins);inv[id]++;saveShop();refreshCoins();shopMsg('購買成功:'+it.name);questAdd('buy',1);
   }else if(!isOwned(type,id)){
-    if(coins<it.price){shopMsg('代幣不足,還差 🪙'+(it.price-coins));return;}
-    coins-=it.price;lsSet('echoCoins',coins);owned.push(type+':'+id);equip[type]=id;saveShop();refreshCoins();shopMsg('購買成功,已裝備 '+it.name);
+    if(it.lock){shopMsg('這個是簽到第 7 天的限定獎勵');return;}
+    if(coins<it.price){shopMsg('代幣不足,還差 💰'+(it.price-coins));return;}
+    coins-=it.price;lsSet('echoCoins',coins);owned.push(type+':'+id);equip[type]=id;saveShop();refreshCoins();shopMsg('購買成功,已裝備 '+it.name);questAdd('buy',1);
     if(net.ws&&net.ws.readyState===1&&net.id)send({t:'look',look:myLook()});
   }else{
     equip[type]=id;saveShop();shopMsg('已裝備 '+it.name);
@@ -623,7 +876,7 @@ function openShop(){
 
 /* ---------- 無盡模式開始 / 結束 ---------- */
 function resetRound(){
-  player.x=0;player.z=0;score=0;danger=0;seqIn=[];alertT=0;elapsed=0;timeLeft=180;runCoins=0;drawSeq();parts.length=0;
+  player.x=0;player.z=0;score=0;danger=0;seqIn=[];alertT=0;elapsed=0;timeLeft=180;runCoins=0;killStreak=0;surviveAcc=0;drawSeq();parts.length=0;
   $('tScore').textContent='淘汰 0';refreshCoins();
 }
 function startEndless(){
@@ -631,28 +884,28 @@ function startEndless(){
   coinMul=1;let note='走近白點,用耳朵聽旋律!';
   if(inv.double>0){inv.double--;coinMul=2;saveShop();note='🎟️ 雙倍券生效:代幣×2';}
   if(inv.shield>0)note+='  🛡️×'+inv.shield;
+  questAdd('endlessRuns',1);
   for(let i=0;i<6;i++){const b=makeBot();if(i<3){const a=Math.random()*6.28;b.x=Math.sin(a)*(10+i*3);b.z=Math.cos(a)*(10+i*3);}}
   show(null);$('danger').style.display='block';
   running=true;say(note,3);
 }
 function endEndless(why){
-  running=false;
+  running=false;flushSurvive();
   const newBest=score>bestEndless;if(newBest){bestEndless=score;lsSet('echoBestEndless',bestEndless);}
   $('resTitle').textContent=why;
-  $('resBody').innerHTML='本局淘汰:<b>'+score+'</b>(獲得 🪙'+runCoins+(coinMul>1?',雙倍券':'')+')<br>存活時間:'+fmt(elapsed)+'<br>最高紀錄:<b>'+bestEndless+'</b>'+(newBest&&score>0?' 🎉新紀錄':'');
-  $('resAgain').textContent='再來一局';$('resAgain').onclick=()=>{initAudio();startEndless();};
+  $('resBody').innerHTML='本局淘汰:<b>'+score+'</b>(獲得 💰'+runCoins+(coinMul>1?',雙倍券':'')+')<br>存活時間:'+fmt(elapsed)+'<br>最高紀錄:<b>'+bestEndless+'</b>'+(newBest&&score>0?' 🎉新紀錄':'')+(dailyHasReward()?'<br><br>🎁 有每日獎勵可以領取!':'');
+  $('resAgain').textContent='再來一局';$('resAgain').onclick=()=>{initAudio();$('upNote').textContent='';startEndless();};
   $('resMenu').onclick=toMenu;show('pResult');
+  submitEndless(score,elapsed);
 }
-function fmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function toMenu(){
-  running=false;
+  running=false;flushSurvive();
   if(mode==='online'||mode==='lobby')leaveRoom();
   mode='none';clearEnts();refreshMenu();show('pMenu');
 }
 
 /* ---------- 線上多人(WebSocket → Render) ---------- */
 const net={ws:null,id:null,code:'',name:'',players:[],sc:{},lastSend:0,sbT:0};
-function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function setStatus(t){$('onStatus').textContent=t;}
 $('nameIn').value=ls('echoName','玩家'+Math.floor(Math.random()*90+10));
 function getName(){const n=$('nameIn').value.trim()||'玩家';lsSet('echoName',n);return n;}
@@ -687,11 +940,11 @@ function handle(m){
       player.x=m.x;player.z=m.z;flashBad=0.5;break;
     case 'kill':
       boom.push({x:m.x,z:m.z,t:0});
-      if(m.by===net.id){winSound();addCoins(10);runCoins+=10;say('淘汰 '+m.victimName+'!🪙+10',1.6);}
+      if(m.by===net.id){winSound();addCoins(10);runCoins+=10;say('淘汰 '+m.victimName+'!💰+10',1.6);recordKill(true);}
       else if(m.victim===net.id){say('你被 '+m.byName+' 淘汰了!旋律已更新',2);}
       break;
     case 'noise':
-      if(m.id===net.id){buzz();flashBad=0.4;say('彈錯了!噪音暴露了你',1.6);}
+      if(m.id===net.id){buzz();flashBad=0.4;say('彈錯了!噪音暴露了你',1.6);recordMiss();}
       else if(running){const e=ents.find(q=>q.id===m.id);if(e){setPan(e.panner,m.x,m.z);buzz(e.panner,0.5);}}
       break;
     case 'end':endOnline(m.ranking);break;
@@ -718,9 +971,11 @@ function startOnline(m){
 }
 function endOnline(ranking){
   running=false;mode='lobby';clearEnts();
+  questAdd('onlineGames',1);
   const medals=['🥇','🥈','🥉'];
   $('resTitle').textContent='時間到!';
-  $('resBody').innerHTML=ranking.map((r,k)=>(medals[k]||(k+1)+'.')+' '+esc(r.name)+(r.id===net.id?'(你)':'')+' — '+r.sc+' 淘汰').join('<br>')+'<br><br>你本局獲得 🪙'+runCoins;
+  $('resBody').innerHTML=ranking.map((r,k)=>(medals[k]||(k+1)+'.')+' '+esc(r.name)+(r.id===net.id?'(你)':'')+' — '+r.sc+' 淘汰').join('<br>')+'<br><br>你本局獲得 💰'+runCoins+(dailyHasReward()?'<br>🎁 有每日獎勵可以領取!':'');
+  $('upNote').textContent='線上成績已自動計入線上排行榜';
   $('resAgain').textContent='回房間大廳';$('resAgain').onclick=()=>show('pLobby');
   $('resMenu').onclick=toMenu;show('pResult');
 }
@@ -733,17 +988,17 @@ function updateBoard(){
   rows.sort((a,b)=>b.sc-a.sc);
   $('board').innerHTML=rows.slice(0,6).map(r=>(r.id===net.id?'<b>':'')+esc(r.name)+' '+r.sc+(r.id===net.id?'</b>':'')).join('<br>');
 }
-$('bCreate').addEventListener('click',()=>{const n=getName();connect(()=>send({t:'create',name:n,look:myLook()}));});
+$('bCreate').addEventListener('click',()=>{const n=getName();connect(()=>send({t:'create',name:n,look:myLook(),pid}));});
 $('bJoin').addEventListener('click',()=>{
   const c=$('codeIn').value.trim();if(c.length!==4){setStatus('請輸入 4 位房間代碼');return;}
-  const n=getName();connect(()=>send({t:'join',name:n,code:c,look:myLook()}));
+  const n=getName();connect(()=>send({t:'join',name:n,code:c,look:myLook(),pid}));
 });
 $('bStart').addEventListener('click',()=>send({t:'start'}));
 $('bLeave').addEventListener('click',()=>{leaveRoom();show('pOnline');});
 $('onBack').addEventListener('click',()=>show('pMenu'));
 
 /* ---------- 選單 ---------- */
-$('bEndless').addEventListener('click',()=>{initAudio();startEndless();});
+$('bEndless').addEventListener('click',()=>{initAudio();$('upNote').textContent='';startEndless();});
 $('bOnline').addEventListener('click',()=>{initAudio();setStatus('');show('pOnline');});
 $('bShop').addEventListener('click',openShop);
 $('shopBack').addEventListener('click',()=>{refreshMenu();show('pMenu');});
@@ -770,6 +1025,7 @@ function loop(now){
     player.tt-=dt;if(player.moving&&player.tt<=0){player.tt=0.09;emitTrail(player.x,player.z,equip.trail);}
     if(mode==='endless'){
       updateBotsEndless(dt);elapsed+=dt;
+      surviveAcc+=dt;if(surviveAcc>=1)flushSurvive();
       $('tTime').textContent=fmt(elapsed);
       if(alertT>0)alertT-=dt;
       if(danger>=100){
@@ -795,7 +1051,7 @@ function loop(now){
   }
   draw();
 }
-refreshMenu();show('pMenu');
+ensureDaily();refreshMenu();show('pMenu');
 requestAnimationFrame(loop);
 window.addEventListener('error',function(e){setStatus('錯誤: '+e.message);});
 </script>
