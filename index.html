@@ -58,6 +58,37 @@ label{font-size:14px;color:#cde}
 .item button.cant{background:#555}
 .item button.on{background:#2fa84f}
 #shopMsg{min-height:22px;font-weight:700;color:#ffe9a0}
+/* ===== 手機版面修正 ===== */
+.panel{
+  justify-content:flex-start !important;
+  touch-action:pan-y;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding:12px 16px calc(14px + env(safe-area-inset-bottom));
+}
+.panel>:first-child{margin-top:auto}
+.panel>:last-child{margin-bottom:auto}
+
+@media (max-height:600px){
+  .panel h1{font-size:28px;margin:0}
+  .panel h2{font-size:18px;margin:0 0 6px}
+  .panel p{margin:3px 0;font-size:13px;line-height:1.4}
+  .btn{padding:9px 14px;font-size:16px;margin:5px auto}
+  #coinBar,#shopCoin,#dailyCoin{font-size:16px;margin-bottom:4px}
+  #code{font-size:34px}
+  #shopPrev{width:70px;height:70px}
+  input[type=text]{padding:8px;font-size:16px;margin:3px 0}
+  .sec{padding:8px;margin:5px 0}
+  .tabs{margin:5px 0}
+}
+
+@media (max-height:600px) and (orientation:landscape){
+  #pMenu{flex-direction:row;flex-wrap:wrap;align-content:flex-start;justify-content:center;gap:0 12px}
+  #pMenu>h1,#pMenu>p,#pMenu>#coinBar,#pMenu>label{flex:0 0 100%}
+  #pMenu>:first-child{margin-top:0}
+  #pMenu>:last-child{margin-bottom:0}
+  #pMenu>.btn{flex:0 0 min(260px,44%);width:auto}
+}
 </style>
 </head>
 <body>
